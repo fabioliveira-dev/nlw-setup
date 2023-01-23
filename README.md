@@ -1,7 +1,7 @@
 <h1 align="center"> Habits </h1>
 
 <p align="center">
-NLW é um evento exclusivo e gratuito, promovido pela Rocketseat para ensino de tecnologias WEB. <br/>
+NLW Setup é um evento exclusivo e gratuito, promovido pela Rocketseat para ensino de tecnologias WEB. <br/>
 </p>
 
 <p align="center">
@@ -32,7 +32,9 @@ Esse projeto foi desenvolvido com as seguintes tecnologias:
 
 ## 💻 Projeto
 
-O Habits é um app que ajuda a rastrear os habitos
+O Habits é um app que ajuda a rastrear os habitos.
+
+[Visite o projeto online](https://fabioliveira87.github.io/nlw-setup)
 
 ## 🔖 Layout
 
