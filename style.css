@@ -156,6 +156,36 @@ button:active {
   transform: scale(1.05);
 }
 
+.habit-remove {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 20px;
+  height: 20px;
+  background: var(--danger);
+  border: 2px solid var(--bg-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: white;
+  cursor: pointer;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.habit:hover .habit-remove {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.habit-remove:hover {
+  background: #dc2626;
+  transform: scale(1.1);
+}
 .habit-tooltip {
   position: absolute;
   left: 80px;

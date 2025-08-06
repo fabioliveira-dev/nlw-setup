@@ -19,6 +19,14 @@ addHabitButton.addEventListener("click", openHabitModal)
 cancelHabitButton.addEventListener("click", closeHabitModal)
 newHabitForm.addEventListener("submit", addNewHabit)
 
+// Event listener para remover hábitos (usando delegação de eventos)
+document.addEventListener("click", (e) => {
+  if (e.target.classList.contains("habit-remove")) {
+    e.preventDefault()
+    e.stopPropagation()
+    removeHabit(e.target.closest(".habit"))
+  }
+})
 // Fechar modal clicando fora
 habitModal.addEventListener("click", (e) => {
   if (e.target === habitModal) {
@@ -74,6 +82,7 @@ function addNewHabit(e) {
   habitElement.dataset.name = habitName.toLowerCase().replace(/\s+/g, "")
   habitElement.innerHTML = `
     ${habitEmoji}
+    <button class="habit-remove" title="Remover hábito">×</button>
     <div class="habit-tooltip">${habitName}</div>
   `
   
@@ -88,6 +97,49 @@ function addNewHabit(e) {
   showNotification(`Hábito "${habitName}" adicionado! 🎉`, "success")
 }
 
+// Função para remover hábito
+function removeHabit(habitElement) {
+  const habitName = habitElement.querySelector(".habit-tooltip")?.textContent || "este hábito"
+  
+  // Confirmar remoção
+  if (!confirm(`Tem certeza que deseja remover "${habitName}"?\n\nIsso também removerá todos os dados deste hábito dos dias já registrados.`)) {
+    return
+  }
+  
+  const habitDataName = habitElement.dataset.name
+  
+  // Remover dados do hábito de todos os dias
+  const data = nlwSetup.data || {}
+  Object.keys(data).forEach(day => {
+    const dayHabits = data[day] || []
+    const habitIndex = dayHabits.indexOf(habitDataName)
+    if (habitIndex > -1) {
+      dayHabits.splice(habitIndex, 1)
+      data[day] = dayHabits
+    }
+  })
+  
+  // Atualizar dados no nlwSetup
+  nlwSetup.setData(data)
+  
+  // Remover elemento visual
+  habitElement.remove()
+  
+  // Salvar alterações
+  save()
+  saveCustomHabits()
+  
+  // Recarregar interface para atualizar os dias
+  nlwSetup.load()
+  
+  showNotification(`Hábito "${habitName}" removido! 🗑️`, "warning")
+  
+  // Atualizar estatísticas
+  setTimeout(() => {
+    updateStats()
+    addDayHoverEffects()
+  }, 100)
+}
 // Função para salvar hábitos customizados
 function saveCustomHabits() {
   const habits = Array.from(document.querySelectorAll(".habit")).map(habit => ({
@@ -118,6 +170,7 @@ function loadCustomHabits() {
       habitElement.dataset.name = habit.name
       habitElement.innerHTML = `
         ${habit.emoji}
+        <button class="habit-remove" title="Remover hábito">×</button>
         <div class="habit-tooltip">${habit.tooltip}</div>
       `
       habitsContainer.insertBefore(habitElement, addButton)
