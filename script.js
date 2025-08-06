@@ -335,6 +335,144 @@ function init() {
 // Inicializar quando a página carregar
 document.addEventListener("DOMContentLoaded", init)
 
+// Registrar Service Worker para PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then((registration) => {
+        console.log('SW registrado com sucesso:', registration)
+        
+        // Verificar se há atualizações
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              showNotification('Nova versão disponível! Recarregue a página.', 'info')
+            }
+          })
+        })
+      })
+      .catch((error) => {
+        console.log('Falha ao registrar SW:', error)
+      })
+  })
+}
+
+// Detectar instalação do PWA
+let deferredPrompt
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Previne o prompt automático
+  e.preventDefault()
+  deferredPrompt = e
+  
+  // Mostrar botão de instalação customizado
+  showInstallButton()
+})
+
+// Função para mostrar botão de instalação
+function showInstallButton() {
+  const installButton = document.createElement('button')
+  installButton.textContent = '📱 Instalar App'
+  installButton.className = 'install-btn'
+  installButton.style.cssText = `
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+    z-index: 1000;
+    animation: pulse 2s infinite;
+  `
+  
+  installButton.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt()
+      const { outcome } = await deferredPrompt.userChoice
+      
+      if (outcome === 'accepted') {
+        showNotification('App instalado com sucesso! 🎉', 'success')
+      }
+      
+      deferredPrompt = null
+      installButton.remove()
+    }
+  })
+  
+  document.body.appendChild(installButton)
+  
+  // Remover botão após 10 segundos se não clicado
+  setTimeout(() => {
+    if (installButton.parentNode) {
+      installButton.remove()
+    }
+  }, 10000)
+}
+
+// Detectar quando o app foi instalado
+window.addEventListener('appinstalled', () => {
+  showNotification('Habits instalado com sucesso! 🚀', 'success')
+  deferredPrompt = null
+})
+
+// Suporte a gestos touch para mobile
+let touchStartX = 0
+let touchStartY = 0
+
+document.addEventListener('touchstart', (e) => {
+  touchStartX = e.touches[0].clientX
+  touchStartY = e.touches[0].clientY
+})
+
+document.addEventListener('touchend', (e) => {
+  if (!touchStartX || !touchStartY) return
+  
+  const touchEndX = e.changedTouches[0].clientX
+  const touchEndY = e.changedTouches[0].clientY
+  
+  const diffX = touchStartX - touchEndX
+  const diffY = touchStartY - touchEndY
+  
+  // Swipe horizontal para navegar entre dias
+  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+    const daysContainer = document.querySelector('.days')
+    if (daysContainer) {
+      if (diffX > 0) {
+        // Swipe left - scroll right
+        daysContainer.scrollLeft += 100
+      } else {
+        // Swipe right - scroll left
+        daysContainer.scrollLeft -= 100
+      }
+    }
+  }
+  
+  touchStartX = 0
+  touchStartY = 0
+})
+
+// Verificar parâmetros da URL para ações diretas
+const urlParams = new URLSearchParams(window.location.search)
+const action = urlParams.get('action')
+
+if (action === 'add-day') {
+  // Adicionar dia automaticamente se veio do shortcut
+  setTimeout(() => {
+    addDay()
+  }, 1000)
+} else if (action === 'stats') {
+  // Focar nas estatísticas
+  setTimeout(() => {
+    document.querySelector('.stats').scrollIntoView({ behavior: 'smooth' })
+  }, 500)
+}
+
 // Adicionar suporte a teclado para acessibilidade
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && habitModal.classList.contains("active")) {
