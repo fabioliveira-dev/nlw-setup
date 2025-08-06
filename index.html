@@ -4,39 +4,113 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@600&family=Roboto+Mono:wght@700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto+Mono:wght@400;700&display=swap"
       rel="stylesheet"
     />
 
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Habits</title>
+    <title>Habits - Rastreie seus hábitos diários</title>
+    <meta name="description" content="Aplicativo para rastrear e manter seus hábitos diários de forma simples e eficiente." />
 
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
     <header>
-      <img src="./assets/logo.svg" alt="Logomarca do aplicativo Habits" />
+      <div class="logo">
+        <span>🎯</span>
+        <span>Habits</span>
+      </div>
 
-      <button>
-        <img src="./assets/plus.svg" alt="ícone sinal de mais roxo" />
-
+      <button id="add-day-btn">
+        <span>➕</span>
         <div>Registrar o meu dia</div>
       </button>
     </header>
 
+    <section class="stats">
+      <div class="stat-card">
+        <span class="stat-number" id="total-days">0</span>
+        <span class="stat-label">Dias registrados</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number" id="completed-habits">0</span>
+        <span class="stat-label">Hábitos concluídos</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number" id="completion-rate">0%</span>
+        <span class="stat-label">Taxa de conclusão</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number" id="current-streak">0</span>
+        <span class="stat-label">Sequência atual</span>
+      </div>
+    </section>
+
     <form id="form-habits">
-      <div class="habits">
-        <div class="habit" data-name="run">🏃🏽‍♂️</div>
-        <div class="habit" data-name="water">💧</div>
-        <div class="habit" data-name="food">🍎</div>
-        <div class="habit" data-name="journal">📕</div>
-        <div class="habit" data-name="takePills">💊</div>
+      <div class="habits-section">
+        <h3 class="section-title">Meus Hábitos</h3>
+        <div class="habits">
+          <div class="habit" data-name="run">
+            🏃🏽‍♂️
+            <div class="habit-tooltip">Exercitar-se</div>
+          </div>
+          <div class="habit" data-name="water">
+            💧
+            <div class="habit-tooltip">Beber água</div>
+          </div>
+          <div class="habit" data-name="food">
+            🍎
+            <div class="habit-tooltip">Comer saudável</div>
+          </div>
+          <div class="habit" data-name="journal">
+            📕
+            <div class="habit-tooltip">Escrever diário</div>
+          </div>
+          <div class="habit" data-name="takePills">
+            💊
+            <div class="habit-tooltip">Tomar vitaminas</div>
+          </div>
+          <div class="habit" data-name="read">
+            📚
+            <div class="habit-tooltip">Ler livros</div>
+          </div>
+          <div class="habit" data-name="meditate">
+            🧘‍♀️
+            <div class="habit-tooltip">Meditar</div>
+          </div>
+          <div class="habit" data-name="sleep">
+            😴
+            <div class="habit-tooltip">Dormir bem</div>
+          </div>
+          <button type="button" class="add-habit-btn" id="add-habit-btn">+</button>
+        </div>
       </div>
 
       <div class="days"></div>
     </form>
+
+    <!-- Modal para adicionar novo hábito -->
+    <div class="modal" id="habit-modal">
+      <div class="modal-content">
+        <h3>Adicionar Novo Hábito</h3>
+        <form id="new-habit-form">
+          <div class="form-group">
+            <label for="habit-name">Nome do hábito:</label>
+            <input type="text" id="habit-name" required maxlength="20" />
+          </div>
+          <div class="form-group">
+            <label for="habit-emoji">Emoji (opcional):</label>
+            <input type="text" id="habit-emoji" maxlength="2" placeholder="🎯" />
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn-secondary" id="cancel-habit">Cancelar</button>
+            <button type="submit" class="btn-primary">Adicionar</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/gh/maykbrito/libs/NLWSetup/source/NLWSetup.js"></script>
     <script src="./script.js"></script>
